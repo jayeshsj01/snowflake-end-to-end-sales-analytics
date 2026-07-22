@@ -1,0 +1,63 @@
+/*
+=========================================================
+Problem Statement
+=========================================================
+
+Correct all orders where the order date is earlier than
+the corresponding store opening date.
+
+=========================================================
+Approach
+=========================================================
+
+1. Identify orders where the order date is before the
+   store opening date.
+2. Generate a random valid date between the store opening
+   date and the current date.
+3. Convert the generated date into its corresponding
+   DATE_ID using DIM_DATE.
+4. Update FACT_ORDER with the new DATE_ID.
+
+=========================================================
+SQL Solution
+=========================================================
+*/
+
+UPDATE FACT_ORDER F
+SET DATE_ID = R.DATE_ID
+FROM
+(
+    SELECT
+        FO.ORDER_ID,
+        DD.DATE_ID,
+        NEW_DATE
+    FROM
+    (
+        SELECT
+            FO.ORDER_ID,
+            DATEADD(
+                DAY,
+                UNIFORM(
+                    1,
+                    DATEDIFF(
+                        DAY,
+                        DS.STORE_OPENING_DATE,
+                        CURRENT_DATE()
+                    ) * 0.1,
+                    RANDOM()
+                ),
+                DS.STORE_OPENING_DATE
+            ) AS NEW_DATE
+        FROM FACT_ORDER FO
+        JOIN DIM_DATE DT
+            ON FO.DATE_ID = DT.DATE_ID
+        JOIN DIM_STORE DS
+            ON FO.STORE_ID = DS.STORE_ID
+        WHERE DT.DATE < DS.STORE_OPENING_DATE
+    ) FO
+    JOIN DIM_DATE DD
+        ON DD.DATE = FO.NEW_DATE
+) R
+WHERE F.ORDER_ID = R.ORDER_ID;
+
+COMMIT;

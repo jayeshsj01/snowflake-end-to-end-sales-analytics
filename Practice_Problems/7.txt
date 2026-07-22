@@ -1,0 +1,38 @@
+/*
+=========================================================
+Problem Statement
+=========================================================
+
+Find customers who have ordered products from more than
+three distinct categories in the last 6 months.
+
+=========================================================
+Approach
+=========================================================
+
+1. Filter orders placed in the last 6 months.
+2. Join FACT_ORDER with DIM_DATE to filter recent orders.
+3. Join DIM_PRODUCT to get the product category.
+4. Group by CUSTOMER_ID.
+5. Return customers who ordered from more than
+   three distinct categories.
+
+=========================================================
+SQL Solution
+=========================================================
+*/
+
+SELECT
+    FO.CUSTOMER_ID
+FROM FACT_ORDER FO
+JOIN DIM_DATE DD
+    ON FO.DATE_ID = DD.DATE_ID
+JOIN DIM_PRODUCT DP
+    ON FO.PRODUCT_ID = DP.PRODUCT_ID
+WHERE DD.DATE >= DATEADD(
+                    MONTH,
+                    -6,
+                    CURRENT_DATE()
+                 )
+GROUP BY FO.CUSTOMER_ID
+HAVING COUNT(DISTINCT DP.CATEGORY) > 3;

@@ -1,0 +1,33 @@
+
+=========================================================
+Problem Statement
+=========================================================
+
+Update the store opening date for all stores so that the
+opening date falls between 01-Jan-2014 and the current date.
+
+=========================================================
+Approach
+=========================================================
+
+1. Use 01-Jan-2014 as the base date.
+2. Generate a random number between 0 and 3800 using the
+   UNIFORM() function.
+3. Add the generated number of days to the base date using
+   DATEADD().
+4. Update the STORE_OPENING_DATE column for all stores.
+
+=========================================================
+SQL Solution
+=========================================================
+
+
+UPDATE DIM_STORE
+SET STORE_OPENING_DATE =
+    DATEADD(
+        DAY,
+        UNIFORM(0, 3800, RANDOM()),
+        '2014-01-01'
+    );
+
+COMMIT;

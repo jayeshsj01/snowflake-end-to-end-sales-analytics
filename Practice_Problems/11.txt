@@ -1,0 +1,46 @@
+/*
+=========================================================
+Problem Statement
+=========================================================
+
+Display the total sales amount by Region and Category
+for the last 6 months.
+
+=========================================================
+Approach
+=========================================================
+
+1. Join FACT_ORDER with DIM_DATE.
+2. Filter orders from the last 6 months.
+3. Join DIM_PRODUCT to get Category.
+4. Join DIM_STORE to get Region.
+5. Group by Region and Category.
+6. Calculate the sum of TOTAL_AMOUNT.
+
+=========================================================
+SQL Solution
+=========================================================
+*/
+
+SELECT
+    DS.REGION,
+    DP.CATEGORY,
+    SUM(FO.TOTAL_AMOUNT) AS TOTAL_SALES_AMOUNT
+FROM FACT_ORDER FO
+JOIN DIM_DATE DD
+    ON FO.DATE_ID = DD.DATE_ID
+JOIN DIM_PRODUCT DP
+    ON FO.PRODUCT_ID = DP.PRODUCT_ID
+JOIN DIM_STORE DS
+    ON FO.STORE_ID = DS.STORE_ID
+WHERE DD.DATE >= DATEADD(
+                    MONTH,
+                    -6,
+                    CURRENT_DATE()
+                 )
+GROUP BY
+    DS.REGION,
+    DP.CATEGORY
+ORDER BY
+    DS.REGION,
+    DP.CATEGORY;

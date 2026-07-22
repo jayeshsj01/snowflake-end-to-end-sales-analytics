@@ -1,0 +1,38 @@
+/*
+=========================================================
+Problem Statement
+=========================================================
+
+Calculate the average order amount per store for the
+year 2024. Display the Store Name and Store Type.
+
+=========================================================
+Approach
+=========================================================
+
+1. Join FACT_ORDER with DIM_DATE.
+2. Filter records for the year 2024.
+3. Join DIM_STORE to get Store Name and Store Type.
+4. Group by Store Name and Store Type.
+5. Calculate the average of TOTAL_AMOUNT.
+
+=========================================================
+SQL Solution
+=========================================================
+*/
+
+SELECT
+    DS.STORE_NAME,
+    DS.STORE_TYPE,
+    AVG(FO.TOTAL_AMOUNT) AS AVERAGE_ORDER_AMOUNT
+FROM FACT_ORDER FO
+JOIN DIM_DATE DD
+    ON FO.DATE_ID = DD.DATE_ID
+JOIN DIM_STORE DS
+    ON FO.STORE_ID = DS.STORE_ID
+WHERE DD.YEAR = 2024
+GROUP BY
+    DS.STORE_NAME,
+    DS.STORE_TYPE
+ORDER BY
+    AVERAGE_ORDER_AMOUNT DESC;

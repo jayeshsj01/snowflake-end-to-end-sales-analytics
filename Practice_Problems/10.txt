@@ -1,0 +1,47 @@
+/*
+=========================================================
+Problem Statement
+=========================================================
+
+Find the customer who has availed the maximum
+discount in the company's lifetime.
+
+=========================================================
+Approach
+=========================================================
+
+1. Read data from FACT_ORDER.
+2. Group records by CUSTOMER_ID.
+3. Calculate the total discount availed by each customer.
+4. Rank customers based on total discount.
+5. Return the customer with Rank = 1.
+
+=========================================================
+SQL Solution
+=========================================================
+*/
+
+WITH BASE_DATA AS
+(
+    SELECT
+        CUSTOMER_ID,
+        SUM(DISCOUNT_AMOUNT) AS TOTAL_DISCOUNT
+    FROM FACT_ORDER
+    GROUP BY CUSTOMER_ID
+),
+
+RANKED_DATA AS
+(
+    SELECT
+        *,
+        ROW_NUMBER() OVER (
+            ORDER BY TOTAL_DISCOUNT DESC
+        ) AS DISCOUNT_RANK
+    FROM BASE_DATA
+)
+
+SELECT
+    CUSTOMER_ID,
+    TOTAL_DISCOUNT
+FROM RANKED_DATA
+WHERE DISCOUNT_RANK = 1;

@@ -1,0 +1,31 @@
+/*
+=========================================================
+Problem Statement
+=========================================================
+
+Display month-wise sales for the current year.
+
+=========================================================
+Approach
+=========================================================
+
+1. Join FACT_ORDER with DIM_DATE.
+2. Filter records for the current year.
+3. Group by month.
+4. Calculate the sum of TOTAL_AMOUNT.
+5. Order the results by month.
+
+=========================================================
+SQL Solution
+=========================================================
+*/
+
+SELECT
+    DD.MONTH,
+    SUM(FO.TOTAL_AMOUNT) AS TOTAL_SALES
+FROM FACT_ORDER FO
+JOIN DIM_DATE DD
+    ON FO.DATE_ID = DD.DATE_ID
+WHERE DD.YEAR = EXTRACT(YEAR FROM CURRENT_DATE())
+GROUP BY DD.MONTH
+ORDER BY DD.MONTH;

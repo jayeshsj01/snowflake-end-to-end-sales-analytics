@@ -1,0 +1,42 @@
+/*
+=========================================================
+Problem Statement
+=========================================================
+
+Calculate the maximum discount offered in the last one year.
+
+=========================================================
+Approach
+=========================================================
+
+1. Join FACT_ORDER with DIM_DATE.
+2. Filter orders placed in the last one year.
+3. Rank records by DISCOUNT_AMOUNT using ROW_NUMBER().
+4. Return the record with rank = 1.
+
+=========================================================
+SQL Solution
+=========================================================
+*/
+
+WITH BASE_DATA AS
+(
+    SELECT
+        FO.DISCOUNT_AMOUNT,
+        ROW_NUMBER() OVER (
+            ORDER BY FO.DISCOUNT_AMOUNT DESC
+        ) AS DISCOUNT_RANK
+    FROM FACT_ORDER FO
+    JOIN DIM_DATE DD
+        ON FO.DATE_ID = DD.DATE_ID
+    WHERE DD.DATE >= DATEADD(
+                        YEAR,
+                        -1,
+                        CURRENT_DATE()
+                     )
+)
+
+SELECT
+    DISCOUNT_AMOUNT
+FROM BASE_DATA
+WHERE DISCOUNT_RANK = 1;

@@ -1,0 +1,33 @@
+
+=========================================================
+Problem Statement
+=========================================================
+
+Update the store opening date for stores with STORE_ID
+between 91 and 100 so that their opening date falls
+within the last 12 months.
+
+=========================================================
+Approach
+=========================================================
+
+1. Find the date exactly one year before the current date.
+2. Generate a random number of days between 0 and 360.
+3. Add the generated days to the start date using DATEADD().
+4. Update only stores with STORE_ID between 91 and 100.
+
+=========================================================
+SQL Solution
+=========================================================
+
+
+UPDATE DIM_STORE
+SET STORE_OPENING_DATE =
+    DATEADD(
+        DAY,
+        UNIFORM(0, 360, RANDOM()),
+        DATEADD(YEAR, -1, CURRENT_DATE())
+    )
+WHERE STORE_ID BETWEEN 91 AND 100;
+
+COMMIT;

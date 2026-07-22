@@ -1,0 +1,37 @@
+/*
+=========================================================
+Problem Statement
+=========================================================
+
+Find all customers who have not placed any orders
+in the last 30 days.
+
+=========================================================
+Approach
+=========================================================
+
+1. Identify customers who have placed at least one order
+   in the last 30 days.
+2. Join FACT_ORDER with DIM_DATE to filter recent orders.
+3. Exclude those customers using a NOT IN subquery.
+4. Return the remaining customers.
+
+=========================================================
+SQL Solution
+=========================================================
+*/
+
+SELECT *
+FROM DIM_CUSTOMER
+WHERE CUSTOMER_ID NOT IN
+(
+    SELECT DISTINCT FO.CUSTOMER_ID
+    FROM FACT_ORDER FO
+    JOIN DIM_DATE DD
+        ON FO.DATE_ID = DD.DATE_ID
+    WHERE DD.DATE >= DATEADD(
+                        DAY,
+                        -30,
+                        CURRENT_DATE()
+                    )
+);
